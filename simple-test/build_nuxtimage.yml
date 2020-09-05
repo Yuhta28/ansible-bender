@@ -1,0 +1,36 @@
+---
+- name: Build Nuxt.js image
+  hosts: all
+  vars:
+    ansible_bender:
+      base_image: "localhost/node-python3"
+      ansible_extra_args: "-vvv"
+ 
+      target_image:
+        name: yuta28/bender-test
+        working_dir: /app
+        environment: 
+          NUXT_HOST: 0.0.0.0
+          # environment: NUXT_TELEMETRY_DISABLED=1
+        labels:
+          built-by: '{{ ansible_user }}'        
+
+  tasks:
+  - name: Copy Prototype parts
+    copy:
+      src: "{{ item }}"
+      dest: /app/
+    with_items:
+      - "{{ playbook_dir }}/Prototype/app/package.json"
+      - "{{ playbook_dir }}/Prototype/app/yarn.lock"
+  
+  - name: Yarn install
+    command: "yarn install"
+
+  - name: Copy Prototype
+    synchronize:
+      src: "{{ playbook_dir }}/Prototype/app" 
+      dest: /app
+
+  - name: Run yarn
+    command: ['yarn', 'run', 'dev'] 

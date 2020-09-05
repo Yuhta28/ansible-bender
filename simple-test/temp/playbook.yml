@@ -1,0 +1,16 @@
+---
+- name: Containerized htpd
+  hosts: all
+  vars:
+    # configuration specific for ansible-bender
+    ansible_bender:
+      base_image: debian-python3:buster
+      target_image:
+        # command to run by default when invoking the container
+        name: debian-ntpd:buster
+
+  tasks:
+  - name: install ntpd
+    apt:
+      name: ntp
+      state: latest
