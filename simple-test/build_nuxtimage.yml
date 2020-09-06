@@ -33,4 +33,4 @@
       dest: /app
 
   - name: Run yarn
-    command: ['yarn', 'run', 'dev'] 
+    command: "yarn run dev" 
