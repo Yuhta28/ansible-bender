@@ -29,7 +29,7 @@
     command: "yarn install"
 
   - name: Copy Prototype
-    synchronize:
+    copy:
       src: "{{ playbook_dir }}/Prototype/app" 
       dest: /app
  
