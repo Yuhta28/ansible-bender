@@ -13,11 +13,12 @@
           NUXT_HOST: 0.0.0.0
           # environment: NUXT_TELEMETRY_DISABLED=1
         labels:
-          built-by: '{{ ansible_user }}'        
+          built-by: '{{ ansible_user }}'
+        cmd: "yarn run dev"        
 
   tasks:
   - name: Copy Prototype parts
-    copy:
+    synchronize:
       src: "{{ item }}"
       dest: /app/
     with_items:
@@ -31,6 +32,4 @@
     synchronize:
       src: "{{ playbook_dir }}/Prototype/app" 
       dest: /app
-
-  - name: Run yarn
-    command: "yarn run dev" 
+ 
