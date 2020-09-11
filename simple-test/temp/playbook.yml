@@ -1,16 +1,12 @@
 ---
-- name: Containerized htpd
-  hosts: all
+- hosts: localhost
   vars:
-    # configuration specific for ansible-bender
-    ansible_bender:
-      base_image: debian-python3:buster
-      target_image:
-        # command to run by default when invoking the container
-        name: debian-ntpd:buster
+    gather_facts: false
 
   tasks:
-  - name: install ntpd
-    apt:
-      name: ntp
-      state: latest
+  - name: Simple PUT operation
+    aws_s3:
+      bucket: ansible-bender-bucket
+      object: app
+      src: /home/yuhta/Desktop/ansible_bender/simple-test/Prototype/app/nuxt.config.js
+      mode: put
