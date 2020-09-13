@@ -7,16 +7,15 @@
     ansible_bender:
       base_image: "localhost/node-python3"
       ansible_extra_args: "-vvv"
- 
+
       target_image:
         name: yuta28/bender-test
         working_dir: /app
-        environment: 
+        environment:
           NUXT_HOST: 0.0.0.0
-          # environment: NUXT_TELEMETRY_DISABLED=1
         labels:
           built-by: '{{ ansible_user }}'
-          #   cmd: "yarn run dev"        
+        cmd: "yarn run dev"
 
   tasks:
   - name: Copy Prototype parts
@@ -26,19 +25,25 @@
     with_items:
       - "{{ playbook_dir }}/Prototype/app/package.json"
       - "{{ playbook_dir }}/Prototype/app/yarn.lock"
-  
-        #  - name: Yarn install
-        #    command: "yarn install"
 
-  - name: Upload Prototype to S3
-    aws_s3:
-      bucket: ansible-bender-bucket
-      object: app/nuxt.config.js
-      src: "{{ playbook_dir }}/Prototype/app/nuxt.config.js"
-      mode: put
+  - name: Yarn install
+    command: "yarn install"
 
-    #  - name: Copy Prototype
-    #    copy:
-    #      src: "{{ playbook_dir }}/Prototype/app" 
-    #  dest: /app
- 
+#  - name: Upload Prototype to S3
+#    aws_s3:
+#      bucket: ansible-bender-bucket
+#      object: app/nuxt.config.js
+#      src: "{{ playbook_dir }}/Prototype/app/nuxt.config.js"
+#      mode: put
+
+  - name: Archive app directory
+    delegate_to: localhost
+    archive:
+      path: "{{ playbook_dir }}/Prototype/app"
+      dest: "{{ playbook_dir }}/Prototype/app.tar.gz"
+      format: gz
+
+  - name: Unpacks app.tar.gz
+    unarchive:
+      src: "{{ playbook_dir }}/Prototype/app.tar.gz"
+      dest: /
